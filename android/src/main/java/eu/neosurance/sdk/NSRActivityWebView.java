@@ -37,17 +37,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
-
-import eu.neosurance.cordova.NSRCordovaInterface;
 import eu.neosurance.utils.NSRUtils;
 
 public class NSRActivityWebView extends AppCompatActivity {
-	public WebView webView;
+	private WebView webView;
 	private String photoCallback;
 	private NSR nsr;
 
@@ -60,10 +56,8 @@ public class NSRActivityWebView extends AppCompatActivity {
 		try {
 			String url = getIntent().getExtras().getString("url");
 			webView = new WebView(this);
-
 			if (Build.VERSION.SDK_INT >= 21) {
-				boolean bool = NSRSettings.settings.isDevMode();
-				WebView.setWebContentsDebuggingEnabled(bool);
+				WebView.setWebContentsDebuggingEnabled(NSRUtils.getBoolean(NSRUtils.getSettings(getApplicationContext()), "dev_mode"));
 			}
 			webView.addJavascriptInterface(this, "NSSdk");
 			webView.getSettings().setJavaScriptEnabled(true);
@@ -145,21 +139,6 @@ public class NSRActivityWebView extends AppCompatActivity {
 						public void authorized(boolean authorized) throws Exception {
 							JSONObject settings = NSRUtils.getSettings(getApplicationContext());
 							JSONObject message = new JSONObject();
-
-							if(settings == null){
-								Properties config = new Properties();
-								try {
-									config.load(getApplicationContext().getAssets().open("config.properties"));
-								}catch (IOException e) {
-									e.printStackTrace();
-								}
-
-								settings = new JSONObject();
-								settings.put("base_url",config.getProperty("base_url"));
-								settings.put("code",config.getProperty("code"));
-								settings.put("secret_key",config.getProperty("secret_key"));
-							}
-
 							message.put("api", settings.getString("base_url"));
 							message.put("token", NSRUtils.getToken(getApplicationContext()));
 							message.put("lang", NSRUtils.getLang(getApplicationContext()));
@@ -182,16 +161,16 @@ public class NSRActivityWebView extends AppCompatActivity {
 				}
 				if ("showApp".equals(what)) {
 					if (body.has("params")) {
-						nsr.showApp(body.getJSONObject("params"), NSRCordovaInterface.NSR_ShowAppCallback);
+						nsr.showApp(body.getJSONObject("params"));
 					} else {
-						nsr.showApp(NSRCordovaInterface.NSR_ShowAppCallback);
+						nsr.showApp();
 					}
 				}
 				if ("showUrl".equals(what) && body.has("url")) {
 					if (body.has("params")) {
-						nsr.showUrl(body.getString("url"), body.getJSONObject("params"),NSRCordovaInterface.NSR_ShowAppCallback);
+						nsr.showUrl(body.getString("url"), body.getJSONObject("params"));
 					} else {
-						nsr.showUrl(body.getString("url"),NSRCordovaInterface.NSR_ShowAppCallback);
+						nsr.showUrl(body.getString("url"));
 					}
 				}
 				if ("store".equals(what) && body.has("key") && body.has("data")) {
@@ -266,23 +245,10 @@ public class NSRActivityWebView extends AppCompatActivity {
 					new Handler(Looper.getMainLooper()).post(new Runnable() {
 						public void run() {
 							try {
-								if(Build.VERSION.SDK_INT >= 21)
-									nsr.getWorkflowDelegate().executePayment(getApplicationContext(), body.getJSONObject("payment"), webView.getUrl());
-								//JSONObject paymentInfo = nsr.getWorkflowDelegate().executePayment(getApplicationContext(), body.getJSONObject("payment"), webView.getUrl());
-								//if (body.has("callBack") && Build.VERSION.SDK_INT >= 21) {
-								//	webView.evaluateJavascript(body.getString("callBack") + "(" + (paymentInfo != null ? paymentInfo.toString() : "") + ")", null);
-								//}
-
-								/*
-
-								try {
-				payment.put("url",url);
-				NSRCordovaInterface.appPaymentHandler(payment);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-								*/
+								JSONObject paymentInfo = nsr.getWorkflowDelegate().executePayment(getApplicationContext(), body.getJSONObject("payment"), webView.getUrl());
+								if (body.has("callBack") && Build.VERSION.SDK_INT >= 21) {
+									webView.evaluateJavascript(body.getString("callBack") + "(" + (paymentInfo != null ? paymentInfo.toString() : "") + ")", null);
+								}
 							} catch (Throwable e) {
 							}
 						}
@@ -422,8 +388,7 @@ public class NSRActivityWebView extends AppCompatActivity {
 	}
 
 	public synchronized void finish() {
-		if(nsr != null)
-			nsr.clearWebView();
+		nsr.clearWebView();
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			public void run() {
 				try {

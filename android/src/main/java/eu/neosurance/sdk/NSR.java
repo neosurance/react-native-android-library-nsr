@@ -6,16 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import com.google.android.gms.location.ActivityRecognitionClient;
-
-import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-//import eu.neosurance.cordova.NSRCordovaInterface;
-//import eu.neosurance.utils.NSRShake;
-import java.io.IOException;
-import java.util.Properties;
-
+import eu.neosurance.utils.NSRShake;
 import eu.neosurance.utils.NSRUtils;
 
 public class NSR {
@@ -49,9 +42,8 @@ public class NSR {
 
 	protected NSR(Context ctx) {
 		this.ctx = ctx.getApplicationContext();
-		//NSRShake nsrShake = new NSRShake();
-		//setNSRShake(ctx,nsrShake);
-
+		NSRShake nsrShake = new NSRShake();
+		setNSRShake(ctx,nsrShake);
 	}
 
 	//********** GET_INSTANCE **********//
@@ -108,12 +100,12 @@ public class NSR {
 
 	//********** SETUP **********//
 
-	public void setup(NSRSettings settings){ //, JSONObject jsonShake) {
+	public void setup(NSRSettings settings, JSONObject jsonShake) {
 		if (NSRUtils.gracefulDegradate()) {
 			return;
 		}
 
-		//NSRShake.setShakeLabelAndPayload(jsonShake);
+		NSRShake.setShakeLabelAndPayload(jsonShake);
 
 		if (settings.getSecurityDelegate() != null) {
 			setSecurityDelegate(settings.getSecurityDelegate());
@@ -374,14 +366,14 @@ public class NSR {
 
 	//********** LOGIN AND PAYMENT **********//
 
-	public static void loginExecuted(String url, CallbackContext NSR_LoginExecutedCallback) {
+	public static void loginExecuted(String url) {
 		urlX = url;
-		NSRUser.loginExecuted(urlX,ctx,NSR_LoginExecutedCallback);
+		NSRUser.loginExecuted(urlX,ctx);
 	}
 
-	public static void paymentExecuted(JSONObject paymentInfo, String url, CallbackContext NSR_PaymentExecutedCallback) {
+	public static void paymentExecuted(JSONObject paymentInfo, String url) {
 		urlX = url;
-		NSRUser.paymentExecuted(paymentInfo,urlX,NSR_PaymentExecutedCallback);
+		NSRUser.paymentExecuted(paymentInfo,urlX);
 	}
 
 	//********** PUSH NOTIFICATIONS (NSRPush) **********//
@@ -405,7 +397,6 @@ public class NSR {
 
 	//********** SHAKE **********//
 
-/*
 	public void setNSRShake(Context ctx, NSRShake nsrShake){
 		nsrShake.setNSRShake(ctx);
 	}
@@ -417,7 +408,6 @@ public class NSR {
 	public static void NSROnStop() {
 		NSRShake.NSRShakeOnStop();
 	}
-*/
 
 	//********** NSR_USER **********//
 
@@ -501,31 +491,24 @@ public class NSR {
 
 	//********** UTILS **********//
 
-	public void showApp(CallbackContext callbackContext) {
-
-		String urlTmp = NSRUtils.getAppURL(ctx);
-		if (urlTmp != null)
-			showUrl(urlTmp, null, callbackContext);
+	public void showApp() {
+		if (NSRUtils.getAppURL(ctx) != null)
+			showUrl(NSRUtils.getAppURL(ctx), null);
 	}
 
-	public void showApp(JSONObject params, CallbackContext callbackContext) {
-
-		String urlTmp = NSRUtils.getAppURL(ctx);
-		if (urlTmp != null)
-			showUrl(urlTmp, params, callbackContext);
+	public void showApp(JSONObject params) {
+		if (NSRUtils.getAppURL(ctx) != null)
+			showUrl(NSRUtils.getAppURL(ctx), params);
 	}
 
-	public static void showUrl(String url, CallbackContext callbackContext) {
+	public static void showUrl(String url) {
 		urlX = url;
-		showUrl(url, null, callbackContext);
+		showUrl(url, null);
 	}
 
-	public static synchronized void showUrl(String url, JSONObject params, CallbackContext callbackContext) {
+	public static synchronized void showUrl(String url, JSONObject params) {
 		urlX = url;
-		if(url != null && url.trim().length() > 0)
-			NSRUtils.showUrl(url,params,ctx, callbackContext);
-		else if(callbackContext != null)
-			callbackContext.error("No url found");
+		NSRUtils.showUrl(url,params,ctx);
 	}
 
 	public static Intent makeActivityWebView(String url) throws Exception {

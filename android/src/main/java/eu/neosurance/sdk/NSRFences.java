@@ -46,8 +46,7 @@ public class NSRFences {
 			boolean fine = ActivityCompat.checkSelfPermission(nsr.ctx, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 			JSONObject conf = NSRUtils.getConf(nsr.ctx.getApplicationContext());
 			JSONArray fences = getFences();
-
-            if (fine && conf != null && fences != null && conf.has("fence") && NSRUtils.getBoolean(conf.getJSONObject("fence"), "enabled")) {
+			if (fine && conf != null && fences != null && NSRUtils.getBoolean(conf.getJSONObject("fence"), "enabled")) {
 				initFence();
 				List<Geofence> fenceList = new ArrayList();
 				for (int i = 0; i < fences.length(); i++) {

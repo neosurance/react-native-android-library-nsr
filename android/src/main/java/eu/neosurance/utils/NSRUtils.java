@@ -11,8 +11,6 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
-
-import org.apache.cordova.CallbackContext;
 import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -25,13 +23,11 @@ import java.util.TimeZone;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import eu.neosurance.sdk.BuildConfig;
 import eu.neosurance.sdk.NSR;
 import eu.neosurance.sdk.NSRActivityWebView;
 import eu.neosurance.sdk.NSREventWebView;
 import eu.neosurance.sdk.NSRLog;
-
-import eu.neosurance.sdk.NSRSettings;
-import io.ionic.starter.BuildConfig;
 
 public class NSRUtils {
 
@@ -135,10 +131,7 @@ public class NSRUtils {
 
     public static String getPushToken(Context ctx) {
         try {
-            if(getSettings(ctx) != null)
-                return getSettings(ctx).has("push_token") ? getSettings(ctx).getString("push_token") : null;
-            else
-                return null;
+            return getSettings(ctx).has("push_token") ? getSettings(ctx).getString("push_token") : null;
         } catch (Exception e) {
             NSRLog.e("getPushToken", e);
             return null;
@@ -147,10 +140,7 @@ public class NSRUtils {
 
     public static String getLang(Context ctx) {
         try {
-            if(ctx != null && getSettings(ctx) != null)
-                return getSettings(ctx).has("ns_lang") ? getSettings(ctx).getString("ns_lang") : null;
-            else
-                return null;
+            return getSettings(ctx).has("ns_lang") ? getSettings(ctx).getString("ns_lang") : null;
         } catch (Exception e) {
             NSRLog.e("getLang", e);
             return null;
@@ -183,8 +173,7 @@ public class NSRUtils {
 
     public static String getToken(Context ctx) {
         try {
-            JSONObject authTmp = getAuth(ctx);
-            return authTmp.has("token") ? authTmp.getString("token") : null;
+            return getAuth(ctx).has("token") ? getAuth(ctx).getString("token") : null;
         } catch (Exception e) {
             NSRLog.e("getToken", e);
             return null;
@@ -233,10 +222,8 @@ public class NSRUtils {
 
     }
 
-    public static synchronized void showUrl(String url, JSONObject params, Context ctx, CallbackContext callbackContext) {
+    public static synchronized void showUrl(String url, JSONObject params, Context ctx) {
         if (NSRUtils.gracefulDegradate()) {
-            if(callbackContext != null)
-                callbackContext.error("NSRUtils - showUrl - gracefulDegradate");
             return;
         }
         try {
@@ -249,9 +236,6 @@ public class NSRUtils {
                 }
             }
 
-            if(callbackContext != null)
-                callbackContext.success(url);
-            
             if (NSR.activityWebView != null) {
                 NSR.activityWebView.navigate(url);
             } else {

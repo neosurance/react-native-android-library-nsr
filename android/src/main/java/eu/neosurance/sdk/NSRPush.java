@@ -14,8 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import org.json.JSONObject;
 
-import io.ionic.starter.R;
-
 public class NSRPush{
 
     public JSONObject jsonPush;

@@ -5,11 +5,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.Properties;
-
 import eu.neosurance.utils.NSRUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -17,18 +13,7 @@ public class NSRDefaultSecurity implements NSRSecurityDelegate {
 
 	public void secureRequest(final Context ctx, final String endpoint, final JSONObject payload, final JSONObject headers, final NSRSecurityResponse completionHandler) throws Exception {
 		try {
-
-			Properties config = new Properties();
-			try {
-				config.load(ctx.getAssets().open("config.properties"));
-			}catch (IOException e) {
-				e.printStackTrace();
-			}
-			//config.getProperty("base_url")
-			//config.getProperty("code")
-			//config.getProperty("secret_key")
-
-			String url = config.getProperty("base_url") + endpoint;//NSRUtils.getSettings(ctx).getString("base_url") + endpoint;
+			String url = NSRUtils.getSettings(ctx).getString("base_url") + endpoint;
 			NSRLog.d("NSRDefaultSecurity: " + url);
 			AsynchRequest asynchRequest = new AsynchRequest(url, payload, headers, completionHandler);
 			asynchRequest.execute();

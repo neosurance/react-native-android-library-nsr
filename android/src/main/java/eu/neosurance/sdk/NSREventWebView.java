@@ -39,7 +39,7 @@ public class NSREventWebView {
 					webView.getSettings().setAllowFileAccessFromFileURLs(true);
 					webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
 					webView.getSettings().setDomStorageEnabled(true);
-					//webView.loadUrl("file:///android_asset/eventCruncher.html?ns_lang=IT" + /* NSRUtils.getLang(ctx) + */ "&ns_log=" + NSRUtils.isLogEnabled(ctx));
+					webView.loadUrl("file:///android_asset/eventCruncher.html?ns_lang=" + NSRUtils.getLang(ctx) + "&ns_log=" + NSRUtils.isLogEnabled(ctx));
 				}
 			});
 
@@ -49,11 +49,11 @@ public class NSREventWebView {
 	}
 
 	public void synch() {
-		eval("nsr_event_cruncher.EVC.synch()");
+		eval("EVC.synch()");
 	}
 
 	public void reset() {
-		eval("localStorage.clear();nsr_event_cruncher.EVC.synch()");
+		eval("localStorage.clear();EVC.synch()");
 	}
 
 	protected void crunchEvent(final String event, final JSONObject payload) {
@@ -61,7 +61,7 @@ public class NSREventWebView {
 			JSONObject nsrEvent = new JSONObject();
 			nsrEvent.put("event", event);
 			nsrEvent.put("payload", payload);
-			eval("nsr_event_cruncher.EVC.innerCrunchEvent(" + nsrEvent.toString() + ")");
+			eval("EVC.innerCrunchEvent(" + nsrEvent.toString() + ")");
 		} catch (JSONException e) {
 			NSRLog.e("crunchEvent", e);
 		}
@@ -140,16 +140,10 @@ public class NSREventWebView {
 				if ("geoCode".equals(what) && body.has("location") && body.has("callBack")) {
 					Geocoder geocoder = null;
 					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-						String lang = NSRUtils.getLang(ctx);
-						if(lang == null)
-							lang = "IT";
-
-						geocoder = new Geocoder(ctx, Locale.forLanguageTag(lang));
+						geocoder = new Geocoder(ctx, Locale.forLanguageTag(NSRUtils.getLang(ctx)));
 					}
 					JSONObject location = body.getJSONObject("location");
-					List<Address> addresses = null;
-					if(geocoder != null)
-						addresses = geocoder.getFromLocation(location.getDouble("latitude"), location.getDouble("longitude"), 1);
+					List<Address> addresses = geocoder.getFromLocation(location.getDouble("latitude"), location.getDouble("longitude"), 1);
 					if (addresses != null && addresses.size() > 0) {
 						Address adr = addresses.get(0);
 						JSONObject address = new JSONObject();

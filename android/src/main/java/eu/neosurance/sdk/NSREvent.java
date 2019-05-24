@@ -6,8 +6,6 @@ import android.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.TimeZone;
-
-import eu.neosurance.cordova.NSRCordovaInterface;
 import eu.neosurance.utils.NSRUtils;
 
 public class NSREvent{
@@ -140,7 +138,7 @@ public class NSREvent{
                                         if (pushes.length() > 0) {
                                             JSONObject notification = pushes.getJSONObject(0);
                                             NSRLog.d(notification.toString());
-                                            NSR.showUrl(notification.getString("url"), NSRCordovaInterface.NSR_ShowAppCallback);
+                                            NSR.showUrl(notification.getString("url"));
                                         }
                                     }
                                 }
