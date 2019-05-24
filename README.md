@@ -43,9 +43,15 @@ There are many ways to do this, here's the way I do it:
         dependencies {
             ...
             implementation "com.android.support:support-annotations:27.+"	
+            implementation 'com.android.support:appcompat-v7:28.0.0'
+            	
+            implementation "com.facebook.react:react-native:+"  // From node_modules
+            	
             implementation 'com.android.support:support-v4:28.0.0'
-            implementation 'com.google.android.gms:play-services-location:15.0.1'              	
-            compile project(':react-native-android-library-nsr')
+            implementation 'com.google.android.gms:play-services-location:15.0.1'
+            implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+            	
+            implementation project(':react-native-android-library-nsr')
         }
         ```
     * Add the following to `android/app/src/main/java/**/MainApplication.java`:
