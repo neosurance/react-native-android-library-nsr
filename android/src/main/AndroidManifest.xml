@@ -1,47 +1,47 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="eu.neosurance.sdk">
+		  package="eu.neosurance.sdk">
 
-	  	<uses-permission android:name="android.permission.INTERNET" />
-	  	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	  	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	  	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-	  	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	  	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	  	<uses-permission android:name="android.permission.CAMERA" />
-	  	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	  	<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
-	  	<uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+	<uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 
-	  	<application>
-	  		<receiver android:name="NSRBootReceiver">
-	  			<intent-filter>
-	  				<action android:name="android.intent.action.BOOT_COMPLETED" />
-	  			</intent-filter>
-	  		</receiver>
-	  		<receiver android:name="NSRFenceCallback" />
-	  		<receiver android:name="NSRActivityCallback" />
-	  		<receiver android:name="NSRDelayedPush" />
-	  		<receiver android:name="NSRBackground" />
+	<application>
+		<receiver android:name="NSRBootReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+			</intent-filter>
+		</receiver>
+		<receiver android:name="NSRFenceCallback" />
+		<receiver android:name="NSRActivityCallback" />
+		<receiver android:name="NSRDelayedPush" />
+		<receiver android:name="NSRBackground" />
 
-	  		<receiver android:name="eu.neosurance.utils.PackageChangeReceiver">
-	  			<intent-filter>
-	  				<action android:name="android.intent.action.PACKAGE_REMOVED"/>
-	  				<action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
-	  				<action android:name="android.intent.action.ACTION_PACKAGE_REMOVED"/>
-	  				<data android:scheme="package"/>
-	  			</intent-filter>
-	  		</receiver>
+		<receiver android:name="eu.neosurance.utils.PackageChangeReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.PACKAGE_REMOVED"/>
+				<action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
+				<action android:name="android.intent.action.ACTION_PACKAGE_REMOVED"/>
+				<data android:scheme="package"/>
+			</intent-filter>
+		</receiver>
 
-	  		<service android:name="NSRForeground" android:exported="false" />
+		<service android:name="NSRForeground" android:exported="false" />
 
-	  		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true">
-	  			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
-	  		</provider>
-	  		<activity
-	  			android:name="eu.neosurance.sdk.NSRActivityWebView"
-	  			android:configChanges="orientation|screenSize|keyboardHidden"
-	  			android:screenOrientation="portrait"/>
-	  </application>
-    
+		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true">
+			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+		</provider>
+		<activity
+				android:name="eu.neosurance.sdk.NSRActivityWebView"
+				android:configChanges="orientation|screenSize|keyboardHidden"
+				android:screenOrientation="portrait"/>
+	</application>
+
 </manifest>
