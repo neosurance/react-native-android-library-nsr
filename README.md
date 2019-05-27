@@ -71,10 +71,16 @@ There are many ways to do this, here's the way I do it:
             }
         }
         ```
-4. Simply `import/require` it by the name defined in your library's `package.json`:
+4. Open **build.gradle** under **android/app/**
+   - find the android { } block
+   ```
+   minSdkVersion 19
+   ```       
+        
+5. Simply `import/require` it by the name defined in your library's `package.json`:
 
     ```javascript
     import Neosurance from 'react-native-android-library-nsr'
     Neosurance.show('Neosurance runs fine', Neosurance.LONG)
     ```
-5. You can test and develop your library by importing the `node_modules` library into **Android Studio** if you don't want to install it from _git_ all the time.
+6. You can test and develop your library by importing the `node_modules` library into **Android Studio** if you don't want to install it from _git_ all the time.
