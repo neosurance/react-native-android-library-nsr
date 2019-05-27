@@ -97,4 +97,105 @@ public class Module extends ReactContextBaseJavaModule {
     Log.d("MODULE NSR",">>>>> " + message);
   }
 
+  @ReactMethod
+  public void setup() {
+
+      getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+
+              Toast.makeText(getReactApplicationContext(), "RUNNING SETUP...", Toast.LENGTH_LONG).show();
+
+              ctx = getReactApplicationContext();
+              NSRSettings settings = new NSRSettings();
+              settings.setDisableLog(false);
+              settings.setDevMode(true);
+              settings.setBaseUrl("https://sbsdk.neosurancecloud.net/api/v1.0/");
+              settings.setCode("bppb");
+              settings.setSecretKey("pass");
+              settings.setPushIcon(R.drawable.nsr_logo);
+              //settings.setWorkflowDelegate(new WFDelegate(),ctx);
+              NSR.getInstance(ctx).setup(settings, new JSONObject());
+              NSR.getInstance(ctx).askPermissions(((ReactApplicationContext) ctx).getCurrentActivity());
+
+            }
+      });
+
+  }
+
+  @ReactMethod
+  public void registerUser(final String msg) {
+
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+        @Override
+        public void run() {
+
+            Toast.makeText(getReactApplicationContext(), "RUNNING " + msg + "...", Toast.LENGTH_LONG).show();
+
+            NSRUser user = new NSRUser();
+            user.setEmail("mario@rossi.com");
+            user.setCode("mario@rossi.com");
+            user.setFirstname("Mario");
+            user.setLastname("Rossi");
+            user.setFiscalCode("RSSMRA85T01F205P");
+            JSONObject locals = new JSONObject();
+
+            try {
+                locals.put("email","mario@rossi.com");
+                locals.put("firstname","Mario");
+                locals.put("lastname","Rossi");
+                locals.put("fiscalCode","RSSMRA85T01F205P");
+                locals.put("pushToken","fake-push");
+                user.setLocals(locals);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            NSR.getInstance(ctx).registerUser(user);
+
+        }
+    });
+
+  }
+
+  @ReactMethod
+  public void sendTrialEvent() {
+
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+        @Override
+        public void run() {
+
+            Toast.makeText(getReactApplicationContext(), "RUNNING SEND TRIAL EVENT...", Toast.LENGTH_LONG).show();
+
+            try {
+                Log.d("MODULE", "sendEvent");
+                JSONObject payload = new JSONObject();
+                payload.put("fake", "1");
+                NSR.getInstance(ctx).sendEvent("trg1", payload);
+            }catch (Exception e) {
+                Log.e("MODULE", "sendEvent exception: " + e.getMessage());
+            }
+
+        }
+    });
+
+  }
+
+  @ReactMethod
+  public void showList() {
+
+      getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+          @Override
+          public void run() {
+
+              Toast.makeText(getReactApplicationContext(), "RUNNING SHOW LIST...", Toast.LENGTH_LONG).show();
+
+              NSR.getInstance(ctx).showApp();
+
+          }
+      });
+
+  }
+
+
 }
