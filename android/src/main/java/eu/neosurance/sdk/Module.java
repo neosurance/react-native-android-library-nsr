@@ -1,5 +1,6 @@
 package eu.neosurance.sdk;
 
+import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +14,8 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
+
+import eu.neosurance.utils.NSRUtils;
 
 public class Module extends ReactContextBaseJavaModule {
 
@@ -37,6 +40,11 @@ public class Module extends ReactContextBaseJavaModule {
     return constants;
   }
 
+  @ReactMethod
+  public String getTitle(){
+      return "NSR SDK React Native Android!";
+  }
+
 
   @ReactMethod
   public void setup(final String settingsTmp) {
@@ -59,7 +67,7 @@ public class Module extends ReactContextBaseJavaModule {
                     settings.setSecretKey(settingsJson.getString("secret_key"));
 
                     settings.setPushIcon(R.drawable.nsr_logo);
-                    //settings.setWorkflowDelegate(new WFDelegate(),ctx);
+                    settings.setWorkflowDelegate(new WFDelegate(),ctx);
                     NSR.getInstance(ctx).setup(settings, new JSONObject());
                     NSR.getInstance(ctx).askPermissions(((ReactApplicationContext) ctx).getCurrentActivity());
 
@@ -147,6 +155,75 @@ public class Module extends ReactContextBaseJavaModule {
       });
 
   }
+
+    @ReactMethod
+    public void takePicture(final String event) {
+
+        ctx = getReactApplicationContext();
+        ctx.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(ctx, "RUNNING NSR CLAIM...", Toast.LENGTH_LONG).show();
+                try {
+                    ctx.startActivity(NSRUtils.makeActivityWebView(event,ctx));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+
+    @ReactMethod
+    public void loginExecuted() {
+
+        ctx = getReactApplicationContext();
+        ctx.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(ctx, "RUNNING LOGIN EXECUTED...", Toast.LENGTH_LONG).show();
+                try {
+
+                    String url = WFDelegate.getData(ctx,"login_url");
+                    //NSR.getInstance(ctx).loginExecuted(url);
+                    NSRUser.loginExecuted(url,ctx);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+
+    @ReactMethod
+    public void paymentExecuted() {
+
+        ctx = getReactApplicationContext();
+        ctx.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(ctx, "RUNNING PAYMENT EXECUTED...", Toast.LENGTH_LONG).show();
+                try {
+
+                    String payment_url = WFDelegate.getData(ctx,"payment_url");
+                    JSONObject paymentJson = new JSONObject(WFDelegate.getData(ctx,"payment"));
+
+                    NSRUser.paymentExecuted(paymentJson,payment_url);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
 
 
 }

@@ -299,7 +299,9 @@ public class NSRUser {
 			NSRLog.d("loginExecuted " + ctx);
 			JSONObject params = new JSONObject();
 			params.put("loginExecuted", "yes");
-			NSR.showUrl(url, params);
+
+			if(url != null && !url.isEmpty())
+				NSR.showUrl(url, params);
 		} catch (Exception e) {
 			NSRLog.e("loginExecuted", e);
 		}
@@ -311,7 +313,8 @@ public class NSRUser {
 		try {
 			JSONObject params = new JSONObject();
 			params.put("paymentExecuted", paymentInfo.toString());
-			NSR.showUrl(url, params);
+			if(url != null && !url.isEmpty())
+				NSR.showUrl(url, params);
 		} catch (Exception e) {
 			NSRLog.e("paymentExecuted", e);
 		}
