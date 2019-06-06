@@ -1,35 +1,17 @@
-## React Native Android Library Neosurance
-This project serves nsr to create custom React Native native modules that can later be installed through NPM and easily be used in production.
+# React Native Android Library
+## react-native-android-library-nsr
 
-## Getting started
-1. Clone the project
-2. Customize the project name by doing the following:
-    * Edit `author` and `name` in `package.json`
-    * Customize the Java package name (`com.domain.package`) as follows:
-        1. Modify it in `android/src/main/AndroidManifest.xml`.
-        2. Rename the folders starting from `android/src/main/java` to match your package name.
-        3. Adjust `package eu.neosurance.sdk;` in the top of the `Module.java` and `Package.java` files in `android/src/main//java/package/path` to match it.
-    * Edit the name of your module in 
 
-        ```java
-        @Override
-        public String getName() {
-            return "Neosurance SDK";
-        }
-        ```
+This project serves nsr to create custom React Native native modules that can later be installed through npm or yarn and easily be used in production.
 
-        and adjust it in `index.android.js`
-3. Modify/Build the Project in Android Studio
-    * Start `Android Studio` and select `File -> New -> Import Project` and select the **android** folder of this package.
-    * If you get a `Plugin with id 'android-library' not found` Error, install `android support repository`.
-    * If you get asked to upgrade _gradle_ to a new version, you can skip it.
+## Getting started Android
 
-## Installing it as a library in your main project
+### Installing it as a library in your main project
 There are many ways to do this, here's the way I do it:
 
-1. Push it to **GitHub**.
-2. Do `npm install --save git+https://github.com/neosurance/react-native-android-library-nsr.git` in your main project.
-3. Link the library:
+1. Do `npm install --save git+https://github.com/neosurance/react-native-android-library-nsr.git` in your main project, or `yarn add git+https://github.com/neosurance/react-native-android-library-nsr.git` 
+
+2. Link the library:
     * Add the following to `android/settings.gradle`:
         ```
         include ':react-native-android-library-nsr'
@@ -84,3 +66,29 @@ There are many ways to do this, here's the way I do it:
     Neosurance.setup(JSON.stringify(settings));
     ```
 6. You can test and develop your library by importing the `node_modules` library into **Android Studio** if you don't want to install it from _git_ all the time.
+
+
+### Usage
+```javascript
+import Neosurance from 'react-native-android-library-nsr';
+
+...
+
+var settings = {
+        base_url:"https://...",
+        code:"code",
+        secret_key:"secret_key",
+        dev_mode: true,
+        disable_log:false
+};
+
+
+if(Platform.OS === 'android') {
+
+    var _self = this;
+
+    Neosurance.setup(JSON.stringify(settings);
+    
+}
+
+```
