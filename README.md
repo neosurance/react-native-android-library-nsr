@@ -81,6 +81,7 @@ var settings = {
         disable_log:false
 };
 
+...
 
 if(Platform.OS === 'android') {
 
