@@ -1,7 +1,6 @@
 # React Native Android Library
 ## react-native-android-library-nsr
 
-
 This project serves nsr to create custom React Native native modules that can later be installed through npm or yarn and easily be used in production.
 
 ## Getting started Android
@@ -87,7 +86,7 @@ if(Platform.OS === 'android') {
 
     var _self = this;
 
-    Neosurance.setup(JSON.stringify(settings);
+    Neosurance.setup(JSON.stringify(settings));
     
 }
 
