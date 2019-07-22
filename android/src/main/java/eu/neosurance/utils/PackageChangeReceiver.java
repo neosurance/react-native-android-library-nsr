@@ -29,9 +29,15 @@ public class PackageChangeReceiver extends BroadcastReceiver {
         File dataDir = null;
         if (android.os.Build.VERSION.SDK_INT >= 24) {
             dataDir = ctx.getDataDir();
+        }       
+        
+        //File appWebViewDir = new File(dataDir.getPath() + "/app_webview/");
+        //deleteDir(appWebViewDir);
+        
+        if(dataDir != null) {
+            File appWebViewDir = new File(dataDir.getPath() + "/app_webview/");
+            deleteDir(appWebViewDir);
         }
-        File appWebViewDir = new File(dataDir.getPath() + "/app_webview/");
-        deleteDir(appWebViewDir);
 
     }
 
