@@ -10,6 +10,8 @@ import eu.neosurance.utils.NSRUtils;
 public class NSRLocationCallback extends LocationCallback {
 	private NSR nsr;
 	private FusedLocationProviderClient locationClient;
+	
+	public static String lastAppStatus = null;
 
 	public NSRLocationCallback(NSR nsr, FusedLocationProviderClient locationClient) {
 		this.nsr = nsr;
@@ -22,6 +24,13 @@ public class NSRLocationCallback extends LocationCallback {
 			return;
 		nsr.opportunisticTrace();
 		nsr.checkHardTraceLocation();
+		
+		String ssid = nsr.getCurrentSsid(nsr.ctx);
+		boolean foreground = nsr.isAppOnForeground(nsr.ctx,nsr.ctx.getPackageName());
+		String appStatus = (foreground) ? "foreground" : "background";
+
+		NSRLog.d("NSRLocationCallback foreground: " + foreground + ", ssid: " + ssid);
+		
 		Location lastLocation = locationResult.getLastLocation();
 		if (lastLocation != null) {
 			try {
@@ -30,18 +39,36 @@ public class NSRLocationCallback extends LocationCallback {
 				}
 				NSRLog.d("NSRLocationCallback: " + lastLocation);
 				String backgroundLocation = lastLocation.getLatitude() + "|" + lastLocation.getLongitude();
-				if (!backgroundLocation.equals(nsr.getBackgroundLocation())) {
+				
+				if(lastAppStatus == null || !lastAppStatus.equals(appStatus)){
 					nsr.setBackgroundLocation(backgroundLocation);
 					NSRLog.d("NSRLocationCallback sending");
 					JSONObject payload = new JSONObject();
 					payload.put("latitude", lastLocation.getLatitude());
 					payload.put("longitude", lastLocation.getLongitude());
 					payload.put("altitude", lastLocation.getAltitude());
+					payload.put("appstatus", appStatus);
+					if(ssid != null)
+						payload.put("ssid", ssid);
+					nsr.crunchEvent("position", payload,nsr.ctx);
+					NSRLog.d("NSRLocationCallback sent");
+				}
+				else if (!backgroundLocation.equals(nsr.getBackgroundLocation())) {
+					nsr.setBackgroundLocation(backgroundLocation);
+					NSRLog.d("NSRLocationCallback sending");
+					JSONObject payload = new JSONObject();
+					payload.put("latitude", lastLocation.getLatitude());
+					payload.put("longitude", lastLocation.getLongitude());
+					payload.put("altitude", lastLocation.getAltitude());
+					payload.put("appstatus", appStatus);
+					if(ssid != null)
+						payload.put("ssid", ssid);
 					nsr.crunchEvent("position", payload,nsr.ctx);
 					NSRLog.d("NSRLocationCallback sent");
 				} else {
 					NSRLog.d("NSRLocationCallback already sent: " + backgroundLocation);
 				}
+			
 			} catch (Exception e) {
 				NSRLog.e("NSRLocationCallback", e);
 			}

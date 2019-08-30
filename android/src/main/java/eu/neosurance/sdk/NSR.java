@@ -10,6 +10,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import eu.neosurance.utils.NSRShake;
 import eu.neosurance.utils.NSRUtils;
+import android.app.ActivityManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.text.TextUtils;
+import java.util.List;
 
 public class NSR {
 
@@ -514,6 +521,36 @@ public class NSR {
 	public static Intent makeActivityWebView(String url) throws Exception {
 		urlX = url;
 		return NSRUtils.makeActivityWebView(urlX,ctx);
+	}
+	
+	public boolean isAppOnForeground(Context context,String appPackageName) {
+		ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+		if (appProcesses == null) {
+			return false;
+		}
+		final String packageName = appPackageName;
+		for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+			if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
+				//                Log.e("app",appPackageName);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String getCurrentSsid(Context context) {
+		String ssid = null;
+		ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		if (networkInfo.isConnected()) {
+			final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+			final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+			if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+				ssid = connectionInfo.getSSID();
+			}
+		}
+		return ssid;
 	}
 
 }
