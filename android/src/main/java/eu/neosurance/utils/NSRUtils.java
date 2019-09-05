@@ -216,6 +216,9 @@ public class NSRUtils {
         if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissionsList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
+        if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        }
         if (permissionsList.size() > 0) {
             ActivityCompat.requestPermissions(activity, permissionsList.toArray(new String[permissionsList.size()]), NSR.PERMISSIONS_MULTIPLE_ACCESSLOCATION);
         }
