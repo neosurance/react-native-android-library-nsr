@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.util.Log;
 
 import org.json.JSONException;
@@ -113,6 +114,16 @@ public class WFDelegate implements NSRWorkflowDelegate {
 	@Override
 	public void confirmTransaction(Context ctx, JSONObject paymentInfo) {
 
+	}
+	
+	@Override
+	public void keepAlive() {
+		Log.d(TAG, "keepAlive");
+	}
+	
+	@Override
+	public void goTo(final Context ctx, final String area) {
+		Log.d(TAG, "goTo: " + area);
 	}
 
 	public static String getData(Context ctx, String key) {
