@@ -69,7 +69,21 @@ public class Module extends ReactContextBaseJavaModule {
 
                     settings.setPushIcon(R.drawable.nsr_logo);
                     settings.setWorkflowDelegate(new WFDelegate(),ctx);
-                    NSR.getInstance(ctx).setup(settings, new JSONObject());
+                    NSR.getInstance(ctx).setup(settings, new JSONObject(), new NSRSecurityResponse() {
+                        public void completionHandler(JSONObject json, String error) throws Exception {
+                            if (error == null) {
+                                Log.d("Module", "setup response");
+                                Log.d("Module", json.toString());
+								
+								callback.invoke(json.toString());
+								
+                            } else {
+                                Log.e("Module", "setup error: " + error);
+								callback.invoke(error);
+                            }
+                        }
+                    });
+					
                     NSR.getInstance(ctx).askPermissions(((ReactApplicationContext) ctx).getCurrentActivity());
 
                 } catch (JSONException e) {
@@ -108,7 +122,20 @@ public class Module extends ReactContextBaseJavaModule {
                 JSONObject locals = new JSONObject(userJson.getString("locals"));
                 //user.setLocals(locals);
 
-                NSR.getInstance(ctx).registerUser(user);
+                NSR.getInstance(ctx).registerUser(user, new NSRSecurityResponse() {
+                        public void completionHandler(JSONObject json, String error) throws Exception {
+                            if (error == null) {
+                                Log.d("Module", "registerUser response");
+                                Log.d("Module", json.toString());
+								
+								callback.invoke(json.toString());
+								
+                            } else {
+                                Log.e("Module", "registerUser error: " + error);
+								callback.invoke(error);
+                            }
+                        }
+                    });
 
             } catch (JSONException e) {
                 e.printStackTrace();

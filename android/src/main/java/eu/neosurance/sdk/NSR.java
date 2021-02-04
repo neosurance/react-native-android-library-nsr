@@ -124,7 +124,7 @@ public class NSR {
 
 	//********** SETUP **********//
 
-	public void setup(NSRSettings settings, JSONObject jsonShake) {
+	public void setup(NSRSettings settings, JSONObject jsonShake, final NSRSecurityResponse responseHandler) {
 		if (NSRUtils.gracefulDegradate()) {
 			return;
 		}
@@ -148,6 +148,15 @@ public class NSR {
 				NSRUtils.storeData("skin", settings.getMiniappSkin(),ctx);
 			}
 			NSRUtils.setSettings(settings.toJsonObject(),ctx);
+			
+			JSONObject setupComplete = new JSONObject();
+			try {
+				setupComplete.put("result","SETUP COMPLETE!");				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}			
+			responseHandler(setupComplete);
+			
 		} catch (Exception e) {
 			NSRLog.e("setup", e);
 		}
@@ -448,8 +457,8 @@ public class NSR {
 		NSRUtils.askPermissions(activity);
 	}
 
-	public void registerUser(NSRUser user) {
-		NSRUser.registerUser(user,ctx);
+	public void registerUser(NSRUser user, final NSRSecurityResponse responseHandler) {
+		NSRUser.registerUser(user,ctx,responseHandler);
 	}
 
 	public void forgetUser() {

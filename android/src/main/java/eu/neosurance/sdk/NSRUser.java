@@ -238,7 +238,7 @@ public class NSRUser {
 
 	//********** REGISTER_USER **********//
 
-	public static void registerUser(NSRUser user, final Context ctx) {
+	public static void registerUser(NSRUser user, final Context ctx, final NSRSecurityResponse responseHandler) {
 		if (NSRUtils.gracefulDegradate()) {
 			return;
 		}
@@ -274,13 +274,8 @@ public class NSRUser {
 
 							NSRLog.d("requestPayload: " + requestPayload.toString());
 
-							NSR.getSecurityDelegate().secureRequest(ctx, "register", requestPayload, headers, new NSRSecurityResponse() {
-								public void completionHandler(JSONObject json, String error) throws Exception {
-									if (error != null) {
-										NSRLog.e("sendUser secureRequest: " + error);
-									}
-								}
-							});
+							NSR.getSecurityDelegate().secureRequest(ctx, "register", requestPayload, headers, responseHandler);
+							
 						} catch (Exception e) {
 							NSRLog.e("sendUser", e);
 						}
