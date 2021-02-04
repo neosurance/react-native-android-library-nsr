@@ -247,10 +247,10 @@ public class Module extends ReactContextBaseJavaModule {
                     NSR.getInstance(ctx).policies(criteria, new NSRSecurityResponse() {
                         public void completionHandler(JSONObject json, String error) throws Exception {
                             if (error == null) {
-                                Log.d(TAG, "policies response");
-                                Log.d(TAG, json.toString());
+                                Log.d("Module", "policies response");
+                                Log.d("Module", json.toString());
                             } else {
-                                Log.e(TAG, "policies error: " + error);
+                                Log.e("Module", "policies error: " + error);
                             }
                         }
                     });

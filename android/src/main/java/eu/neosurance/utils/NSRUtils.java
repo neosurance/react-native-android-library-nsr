@@ -37,12 +37,12 @@ import static eu.neosurance.sdk.NSR.getSecurityDelegate;
 public class NSRUtils {
 
     public static final String PREFS_NAME = "NSRSDK";
-    protected static final String TAG = "NSRUtils";
+    public static final String TAG = "NSRUtils";
     private final static byte[] K = Base64.decode("Ux44AGRuanL0y7qQDeasT3", Base64.NO_WRAP);
     private final static byte[] I = Base64.decode("ycB4AGR7a0fhoFXbpoHy43", Base64.NO_WRAP);
 
     public static String getVersion() {
-        return BuildConfig.LIBRARY_PACKAGE_NAME; //.VERSION_NAME;
+        return ""; //BuildConfig.LIBRARY_PACKAGE_NAME; //.VERSION_NAME;
     }
 
     public static String getOs() {
