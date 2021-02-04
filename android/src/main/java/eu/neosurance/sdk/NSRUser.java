@@ -238,7 +238,7 @@ public class NSRUser {
 
 	//********** REGISTER_USER **********//
 
-	public static void registerUser(NSRUser user, final Context ctx, final NSRSecurityResponse responseHandler) {
+	public static void registerUser(NSRUser user, final Context ctx) {
 		if (NSRUtils.gracefulDegradate()) {
 			return;
 		}
@@ -279,7 +279,6 @@ public class NSRUser {
 									if (error != null) {
 										NSRLog.e("sendUser secureRequest: " + error);
 									}
-									responseHandler.completionHandler(json, error);
 								}
 							});
 						} catch (Exception e) {

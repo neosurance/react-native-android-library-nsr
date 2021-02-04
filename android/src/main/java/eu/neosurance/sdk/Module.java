@@ -122,20 +122,27 @@ public class Module extends ReactContextBaseJavaModule {
                 JSONObject locals = new JSONObject(userJson.getString("locals"));
                 //user.setLocals(locals);
 
-                NSR.getInstance(ctx).registerUser(user, new NSRSecurityResponse() {
-                        public void completionHandler(JSONObject json, String error) throws Exception {
-                            if (error == null) {
-                                Log.d("Module", "registerUser response");
-                                Log.d("Module", json.toString());
+                NSR.getInstance(ctx).registerUser(user);
+
+                Log.d("Module", "Registering User...");				                                
+				callback.invoke(userJson.toString());
+				
+				/*
+				, new NSRSecurityResponse() {
+				                        public void completionHandler(JSONObject json, String error) throws Exception {
+				                            if (error == null) {
+				                                Log.d("Module", "registerUser response");
+				                                Log.d("Module", json.toString());
 								
-								callback.invoke(json.toString());
+												callback.invoke(json.toString());
 								
-                            } else {
-                                Log.e("Module", "registerUser error: " + error);
-								callback.invoke(error);
-                            }
-                        }
-                    });
+				                            } else {
+				                                Log.e("Module", "registerUser error: " + error);
+												callback.invoke(error);
+				                            }
+				                        }
+				                    }
+					*/
 
             } catch (JSONException e) {
                 e.printStackTrace();

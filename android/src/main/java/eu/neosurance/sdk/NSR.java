@@ -457,8 +457,8 @@ public class NSR {
 		NSRUtils.askPermissions(activity);
 	}
 
-	public void registerUser(NSRUser user, final NSRSecurityResponse responseHandler) {
-		NSRUser.registerUser(user,ctx,responseHandler);
+	public void registerUser(NSRUser user) {
+		NSRUser.registerUser(user,ctx);
 	}
 
 	public void forgetUser() {
