@@ -20,13 +20,13 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 301
-        versionName "3.0.1"
+        minSdkVersion 24
+        targetSdkVersion 30
+        versionCode 303
+        versionName "3.0.3"
         multiDexEnabled true
     }
 
@@ -49,6 +49,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    //implementation 'com.google.android.gms:play-services-location:15.0.1'
+	implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 }
