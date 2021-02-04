@@ -274,8 +274,14 @@ public class NSRUser {
 
 							NSRLog.d("requestPayload: " + requestPayload.toString());
 
-							NSR.getSecurityDelegate().secureRequest(ctx, "register", requestPayload, headers, responseHandler);
-							
+							NSR.getSecurityDelegate().secureRequest(ctx, "register", requestPayload, headers, new NSRSecurityResponse() {
+								public void completionHandler(JSONObject json, String error) throws Exception {
+									if (error != null) {
+										NSRLog.e("sendUser secureRequest: " + error);
+									}
+									responseHandler.completionHandler(json, error);
+								}
+							});
 						} catch (Exception e) {
 							NSRLog.e("sendUser", e);
 						}
