@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Promise;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -231,7 +232,7 @@ public class Module extends ReactContextBaseJavaModule {
     }
 	
     @ReactMethod
-    public void policies() {
+    public void policies(final Promise promise) {
 
         ctx = getReactApplicationContext();
         ctx.runOnUiQueueThread(new Runnable() {
@@ -249,8 +250,12 @@ public class Module extends ReactContextBaseJavaModule {
                             if (error == null) {
                                 Log.d("Module", "policies response");
                                 Log.d("Module", json.toString());
+								
+								promise.resolve(json);
+								
                             } else {
                                 Log.e("Module", "policies error: " + error);
+								promise.reject("policies error", error);
                             }
                         }
                     });
