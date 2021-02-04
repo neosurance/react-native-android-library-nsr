@@ -19,14 +19,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -81,12 +80,8 @@ public class NSRActivityWebView extends AppCompatActivity {
 			});
 			webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
 			setContentView(webView);
-			if(url.contains("photo"))
-				postMessage(url);
-			else {
-				webView.loadUrl(url);
-				idle();
-			}
+			webView.loadUrl(url);
+			idle();
 		} catch (Exception e) {
 			NSRLog.e(e.getMessage(), e);
 		}
@@ -269,6 +264,26 @@ public class NSRActivityWebView extends AppCompatActivity {
 						}
 					});
 				}
+				if (nsr.getWorkflowDelegate() != null && "keepAlive".equals(what)) {
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						public void run() {
+							try {
+								nsr.getWorkflowDelegate().keepAlive();
+							} catch (Throwable e) {
+							}
+						}
+					});
+				}
+				if (nsr.getWorkflowDelegate() != null && "goTo".equals(what) && body.has("area")) {
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						public void run() {
+							try {
+								nsr.getWorkflowDelegate().goTo(getApplicationContext(),body.getString("area"));
+							} catch (Throwable e) {
+							}
+						}
+					});
+				}
 			}
 		} catch (Exception e) {
 			NSRLog.e("postMessage", e);
@@ -283,7 +298,7 @@ public class NSRActivityWebView extends AppCompatActivity {
 		return new File(path, "nsr-photo.jpg");
 	}
 
-	public void takePhoto(final String callBack) {
+	private void takePhoto(final String callBack) {
 		boolean camera = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
 		boolean storage = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 		if (camera && storage) {
@@ -305,9 +320,7 @@ public class NSRActivityWebView extends AppCompatActivity {
 		}
 	}
 
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
 		if (Build.VERSION.SDK_INT >= 21 && requestCode == NSR.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				int orientation = new ExifInterface(imageFile().getAbsolutePath()).getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);

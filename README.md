@@ -23,6 +23,8 @@ There are many ways to do this, here's the way I do it:
 
         dependencies {
             ...
+		    implementation 'androidx.appcompat:appcompat:1.2.0'
+
             implementation "com.android.support:support-annotations:27.+"	
             implementation 'com.android.support:appcompat-v7:28.0.0'
             	

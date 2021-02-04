@@ -1,26 +1,34 @@
 package eu.neosurance.sdk;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import com.google.android.gms.location.ActivityRecognitionClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import eu.neosurance.utils.NSRShake;
-import eu.neosurance.utils.NSRUtils;
-import android.app.ActivityManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.google.android.gms.location.ActivityRecognitionClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
+
+import eu.neosurance.utils.NSRShake;
+import eu.neosurance.utils.NSRUtils;
 
 public class NSR {
 
-	protected static final String TAG = "nsr";
+	public static final String TAG = "nsr";
 	public static final int PERMISSIONS_MULTIPLE_ACCESSLOCATION = 0x2043;
 	protected static final int PERMISSIONS_MULTIPLE_IMAGECAPTURE = 0x2049;
 	protected static final int REQUEST_IMAGE_CAPTURE = 0x1702;
@@ -47,10 +55,13 @@ public class NSR {
 
 	public static String urlX = null;
 
+	public static WifiManager wifiManager;
+	public static JSONObject networks;
+
 	protected NSR(Context ctx) {
 		this.ctx = ctx.getApplicationContext();
-		NSRShake nsrShake = new NSRShake();
-		setNSRShake(ctx,nsrShake);
+		//NSRShake nsrShake = new NSRShake();
+		//setNSRShake(ctx,nsrShake);
 	}
 
 	//********** GET_INSTANCE **********//
@@ -62,7 +73,7 @@ public class NSR {
 			instance = new NSR(ctx);
 			if (!NSRUtils.gracefulDegradate()) {
 				try {
-					instance.fences = new NSRFences(instance);
+					//instance.fences = new NSRFences(instance);
 
 					String s = NSRUtils.getData("securityDelegateClass", ctx);
 					if (s != null) {
@@ -87,8 +98,14 @@ public class NSR {
 					NSRLog.e("init", e);
 					NSRLog.d("makePristine....");
 					SharedPreferences.Editor editor = NSRUtils.getSharedPreferences(ctx).edit();
-					editor.remove("securityDelegateClass"); editor.remove("workflowDelegateClass"); editor.remove("pushDelegateClass");
-					editor.remove("conf"); editor.remove("settings"); editor.remove("user"); editor.remove("auth"); editor.remove("appURL");
+					editor.remove("securityDelegateClass");
+					editor.remove("workflowDelegateClass");
+					editor.remove("pushDelegateClass");
+					editor.remove("conf");
+					editor.remove("settings");
+					editor.remove("user");
+					editor.remove("auth");
+					editor.remove("appURL");
 					editor.commit();
 
 					instance.stopHardTraceLocation();
@@ -134,6 +151,7 @@ public class NSR {
 		} catch (Exception e) {
 			NSRLog.e("setup", e);
 		}
+
 	}
 
 	//********** INIT_JOB **********//
@@ -141,7 +159,7 @@ public class NSR {
 	public static void initJob() {
 		NSRLog.d("initJob");
 		try {
-			stopTraceFence();
+			//stopTraceFence();
 			stopHardTraceLocation();
 			stopTraceActivity();
 
@@ -157,9 +175,10 @@ public class NSR {
 
 	public static void continueInitJob() {
 		traceActivity();
-		traceFence();
 		traceLocation();
 		hardTraceLocation();
+		//traceFence();
+		//traceNetworks();
 	}
 
 	//********** TRACE ACTIVITY **********//
@@ -221,6 +240,13 @@ public class NSR {
 	public void opportunisticTrace() {
 		NSRTrace.opportunisticTrace(ctx);
 	}
+
+	//********** TRACE NETWORKS **********//
+
+	public static void traceNetworks(){
+		NSRTrace.traceNetworks(ctx);
+	}
+
 
 	public static String getLastLocationAuth() {
 		return NSRTrace.getLastLocationAuth(ctx);
@@ -498,6 +524,14 @@ public class NSR {
 
 	//********** UTILS **********//
 
+	public void policies(final JSONObject criteria, final NSRSecurityResponse responseHandler){
+		NSRUtils.policies(criteria, responseHandler, ctx);
+	}
+
+	public void closeView(){
+		NSRUtils.closeView();
+	}
+
 	public void showApp() {
 		if (NSRUtils.getAppURL(ctx) != null)
 			showUrl(NSRUtils.getAppURL(ctx), null);
@@ -522,7 +556,7 @@ public class NSR {
 		urlX = url;
 		return NSRUtils.makeActivityWebView(urlX,ctx);
 	}
-	
+
 	public boolean isAppOnForeground(Context context,String appPackageName) {
 		ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 		List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
@@ -551,6 +585,89 @@ public class NSR {
 			}
 		}
 		return ssid;
+	}
+
+	public void getWifiNetworks(){
+
+		wifiManager = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
+
+		BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context c, Intent intent) {
+				boolean success = intent.getBooleanExtra(
+						WifiManager.EXTRA_RESULTS_UPDATED, false);
+				if (success) {
+					scanSuccess();
+				} else {
+					// scan failure handling
+					scanFailure();
+				}
+			}
+		};
+
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+		ctx.registerReceiver(wifiScanReceiver, intentFilter);
+
+		boolean success = wifiManager.startScan();
+		if (!success) {
+			// scan failure handling
+			scanFailure();
+		}
+
+	}
+
+	public void scanSuccess() {
+		List<ScanResult> results = wifiManager.getScanResults();
+
+		networks = new JSONObject();
+		JSONArray netsArray = new JSONArray();
+
+		for(ScanResult net : results){
+
+			Log.d(TAG,"\n\nNET: " + net);
+			JSONObject netjson = new JSONObject();
+			try {
+				netjson.put("BSSID",net.BSSID);
+				netjson.put("SSID",net.SSID);
+				netjson.put("capabilities",net.capabilities);
+				netjson.put("centerFreq0",net.centerFreq0);
+				netjson.put("centerFreq1",net.centerFreq1);
+				netjson.put("channelWidth",net.channelWidth);
+				netjson.put("frequency",net.frequency);
+				netjson.put("level",net.level);
+				netjson.put("operatorFriendlyName",net.operatorFriendlyName);
+				netjson.put("timestamp",net.timestamp);
+				netjson.put("venueName",net.venueName);
+
+				//netjson.put("distanceCm",net.distanceCm);
+				//netjson.put("distanceSdCm",net.distanceSdCm);
+				//netjson.put("seen",net.seen);
+				//netjson.put("untrusted",net.untrusted);
+				//netjson.put("wifiSsid",net.wifiSsid);
+
+				netsArray.put(netjson);
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		try {
+			networks.put("networks",netsArray);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		NSR.getInstance(ctx).sendEvent("changeNetworksState", networks);
+
+	}
+
+	public void scanFailure() {
+		// handle failure: new scan did NOT succeed
+		// consider using old scan results: these are the OLD results!
+		List<ScanResult> results = wifiManager.getScanResults();
 	}
 
 }

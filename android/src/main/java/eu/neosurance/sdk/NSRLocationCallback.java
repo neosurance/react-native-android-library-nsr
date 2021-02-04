@@ -1,16 +1,21 @@
 package eu.neosurance.sdk;
 
 import android.location.Location;
+import android.net.wifi.ScanResult;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import org.json.JSONObject;
+
+import java.util.List;
+
 import eu.neosurance.utils.NSRUtils;
 
 public class NSRLocationCallback extends LocationCallback {
 	private NSR nsr;
 	private FusedLocationProviderClient locationClient;
-	
+
 	public static String lastAppStatus = null;
 
 	public NSRLocationCallback(NSR nsr, FusedLocationProviderClient locationClient) {
@@ -24,13 +29,12 @@ public class NSRLocationCallback extends LocationCallback {
 			return;
 		nsr.opportunisticTrace();
 		nsr.checkHardTraceLocation();
-		
-		String ssid = nsr.getCurrentSsid(nsr.ctx);
+
 		boolean foreground = nsr.isAppOnForeground(nsr.ctx,nsr.ctx.getPackageName());
 		String appStatus = (foreground) ? "foreground" : "background";
 
-		NSRLog.d("NSRLocationCallback foreground: " + foreground + ", ssid: " + ssid);
-		
+		NSRLog.d("NSRLocationCallback foreground: " + foreground);
+
 		Location lastLocation = locationResult.getLastLocation();
 		if (lastLocation != null) {
 			try {
@@ -39,7 +43,6 @@ public class NSRLocationCallback extends LocationCallback {
 				}
 				NSRLog.d("NSRLocationCallback: " + lastLocation);
 				String backgroundLocation = lastLocation.getLatitude() + "|" + lastLocation.getLongitude();
-				
 				if(lastAppStatus == null || !lastAppStatus.equals(appStatus)){
 					nsr.setBackgroundLocation(backgroundLocation);
 					NSRLog.d("NSRLocationCallback sending");
@@ -48,8 +51,6 @@ public class NSRLocationCallback extends LocationCallback {
 					payload.put("longitude", lastLocation.getLongitude());
 					payload.put("altitude", lastLocation.getAltitude());
 					payload.put("appstatus", appStatus);
-					if(ssid != null)
-						payload.put("ssid", ssid);
 					nsr.crunchEvent("position", payload,nsr.ctx);
 					NSRLog.d("NSRLocationCallback sent");
 				}
@@ -61,17 +62,15 @@ public class NSRLocationCallback extends LocationCallback {
 					payload.put("longitude", lastLocation.getLongitude());
 					payload.put("altitude", lastLocation.getAltitude());
 					payload.put("appstatus", appStatus);
-					if(ssid != null)
-						payload.put("ssid", ssid);
 					nsr.crunchEvent("position", payload,nsr.ctx);
 					NSRLog.d("NSRLocationCallback sent");
 				} else {
 					NSRLog.d("NSRLocationCallback already sent: " + backgroundLocation);
 				}
-			
 			} catch (Exception e) {
 				NSRLog.e("NSRLocationCallback", e);
 			}
 		}
 	}
+
 }

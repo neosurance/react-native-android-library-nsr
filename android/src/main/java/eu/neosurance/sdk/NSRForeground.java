@@ -7,7 +7,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
 import org.json.JSONException;
 import eu.neosurance.utils.NSRUtils;
 
@@ -29,7 +31,8 @@ public class NSRForeground extends Service {
 			try {
 				notification.setSmallIcon(NSRUtils.getSettings(getApplicationContext()).getInt("push_icon"));
 			} catch (Exception e) {
-				notification.setSmallIcon(R.drawable.nsr_logo);
+				//notification.setSmallIcon(R.drawable.nsr_logo);
+				Log.d("NSRForeground",e.getMessage());
 			}
 			try {
 

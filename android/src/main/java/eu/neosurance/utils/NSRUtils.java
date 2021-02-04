@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.util.Base64;
 import org.json.JSONObject;
 import java.net.URLEncoder;
@@ -26,18 +26,23 @@ import javax.crypto.spec.SecretKeySpec;
 import eu.neosurance.sdk.BuildConfig;
 import eu.neosurance.sdk.NSR;
 import eu.neosurance.sdk.NSRActivityWebView;
+import eu.neosurance.sdk.NSRAuth;
 import eu.neosurance.sdk.NSREventWebView;
 import eu.neosurance.sdk.NSRLog;
+import eu.neosurance.sdk.NSRSecurityResponse;
+
+import static eu.neosurance.sdk.NSR.authorize;
+import static eu.neosurance.sdk.NSR.getSecurityDelegate;
 
 public class NSRUtils {
 
     public static final String PREFS_NAME = "NSRSDK";
-    protected static final String TAG = "nsr";
+    protected static final String TAG = "NSRUtils";
     private final static byte[] K = Base64.decode("Ux44AGRuanL0y7qQDeasT3", Base64.NO_WRAP);
     private final static byte[] I = Base64.decode("ycB4AGR7a0fhoFXbpoHy43", Base64.NO_WRAP);
 
     public static String getVersion() {
-        return BuildConfig.VERSION_NAME;
+        return BuildConfig.LIBRARY_PACKAGE_NAME; //.VERSION_NAME;
     }
 
     public static String getOs() {
@@ -249,7 +254,47 @@ public class NSRUtils {
         }
     }
 
+    public static void policies(final JSONObject criteria, final NSRSecurityResponse responseHandler, final Context ctx) {
+        if (gracefulDegradate()) {
+            return;
+        }
+        NSRLog.d(TAG + " - policies - criteria: " + criteria);
+        try {
+            NSR.authorize(new NSRAuth() {
+                public void authorized(boolean authorized) throws Exception {
+                    if (!authorized) {
+                        return;
+                    }
+                    JSONObject requestPayload = new JSONObject();
+                    requestPayload.put("criteria", criteria);
 
+                    JSONObject headers = new JSONObject();
+                    String token = NSRUtils.getToken(ctx);
+                    NSRLog.d(TAG + "sendEvent token: " + token);
+                    headers.put("ns_token", token);
+                    headers.put("ns_lang", NSRUtils.getLang(ctx));
+
+                    NSRLog.d(TAG + "requestPayload: " + requestPayload.toString());
+
+                    getSecurityDelegate().secureRequest(ctx, "policies", requestPayload, headers, responseHandler);
+                }
+            });
+        } catch (Exception e) {
+            NSRLog.e(TAG + "policies", e);
+        }
+    }
+
+    public static void closeView() {
+        if (gracefulDegradate()) {
+            return;
+        }
+        try {
+            if (NSR.activityWebView != null)
+                NSR.activityWebView.finish();
+        } catch (Exception e) {
+            NSRLog.e(TAG + "closeView", e);
+        }
+    }
 
     public static Intent makeActivityWebView(String url, Context ctx) throws Exception {
         NSRLog.d("showUrl makeActivityWebView " + ctx);

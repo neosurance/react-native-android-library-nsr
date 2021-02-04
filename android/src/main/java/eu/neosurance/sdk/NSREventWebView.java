@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,7 +21,6 @@ public class NSREventWebView {
 	public static WebView webView = null;
 	private Context ctx;
 	private NSR nsr;
-
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public NSREventWebView(final Context ctx, final NSR nsr) {

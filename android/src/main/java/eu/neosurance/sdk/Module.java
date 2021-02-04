@@ -97,10 +97,15 @@ public class Module extends ReactContextBaseJavaModule {
                 user.setCode(userJson.getString("code"));
                 user.setFirstname(userJson.getString("firstname"));
                 user.setLastname(userJson.getString("lastname"));
+				
+	            user.setAddress(userJson.getString("address"));
+	            user.setZipCode(userJson.getString("cap"));
+	            user.setCity(userJson.getString("city"));
+	            user.setStateProvince(userJson.getString("province"));				
                 user.setFiscalCode(userJson.getString("fiscalCode"));
 
                 JSONObject locals = new JSONObject(userJson.getString("locals"));
-                user.setLocals(locals);
+                //user.setLocals(locals);
 
                 NSR.getInstance(ctx).registerUser(user);
 
@@ -140,7 +145,7 @@ public class Module extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void showList() {
+  public void showApp() {
 
       ctx = getReactApplicationContext();
       ctx.runOnUiQueueThread(new Runnable() {
@@ -177,7 +182,7 @@ public class Module extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void loginExecuted() {
+    public void appLogin() {
 
         ctx = getReactApplicationContext();
         ctx.runOnUiQueueThread(new Runnable() {
@@ -201,7 +206,7 @@ public class Module extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void paymentExecuted() {
+    public void appPayment() {
 
         ctx = getReactApplicationContext();
         ctx.runOnUiQueueThread(new Runnable() {
@@ -216,6 +221,60 @@ public class Module extends ReactContextBaseJavaModule {
 
                     NSRUser.paymentExecuted(paymentJson,payment_url);
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+	
+    @ReactMethod
+    public void policies() {
+
+        ctx = getReactApplicationContext();
+        ctx.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(ctx, "GETTING POLICIES...", Toast.LENGTH_LONG).show();
+                try {
+
+                    JSONObject criteria = new JSONObject();
+                    criteria.put("available",true);
+					
+                    NSR.getInstance(ctx).policies(criteria, new NSRSecurityResponse() {
+                        public void completionHandler(JSONObject json, String error) throws Exception {
+                            if (error == null) {
+                                Log.d(TAG, "policies response");
+                                Log.d(TAG, json.toString());
+                            } else {
+                                Log.e(TAG, "policies error: " + error);
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+	
+    @ReactMethod
+    public void closeView() {
+
+        ctx = getReactApplicationContext();
+        ctx.runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(ctx, "CLOSING VIEW...", Toast.LENGTH_LONG).show();
+                try {
+                    NSR.getInstance(ctx).closeView();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

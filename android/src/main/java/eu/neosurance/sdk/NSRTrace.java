@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import com.google.android.gms.location.ActivityRecognition;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +66,21 @@ public class NSRTrace {
             }
         } catch (JSONException e) {
             NSRLog.e("traceLocation", e);
+        }
+    }
+
+    public static void traceNetworks(Context ctx) {
+        NSRLog.d("traceNetworks");
+        try {
+            JSONObject conf = NSRUtils.getConf(ctx);
+            boolean accNetState = ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
+            boolean accWifiState = ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_GRANTED;
+            boolean changeWifiState = ActivityCompat.checkSelfPermission(ctx, Manifest.permission.CHANGE_WIFI_STATE) == PackageManager.PERMISSION_GRANTED;
+            if ((accNetState && accWifiState && changeWifiState) && conf != null && NSRUtils.getBoolean(conf.getJSONObject("networks"), "enabled")) {
+                NSR.getInstance(ctx).getWifiNetworks();
+            }
+        } catch (JSONException e) {
+            NSRLog.e("traceNetworks", e);
         }
     }
 
@@ -170,7 +185,7 @@ public class NSRTrace {
     //**** OPPORTUNISTIC_TRACE
 
     public static void opportunisticTrace(Context ctx) {
-        NSR.tracePower();
+        //NSR.tracePower();
         NSR.traceConnection();
         try {
             String locationAuth = "notAuthorized";

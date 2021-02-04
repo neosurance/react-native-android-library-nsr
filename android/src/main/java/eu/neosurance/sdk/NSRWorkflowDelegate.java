@@ -10,4 +10,8 @@ public interface NSRWorkflowDelegate {
 	JSONObject executePayment(Context ctx, JSONObject payment, String url);
 
 	void confirmTransaction(Context ctx, JSONObject paymentInfo);
+
+	void keepAlive();
+
+	void goTo(Context ctx, String area);
 }
