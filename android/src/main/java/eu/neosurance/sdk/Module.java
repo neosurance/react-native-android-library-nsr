@@ -251,7 +251,7 @@ public class Module extends ReactContextBaseJavaModule {
                                 Log.d("Module", "policies response");
                                 Log.d("Module", json.toString());
 								
-								callback.invoke(json);
+								callback.invoke(json.toString());
 								
                             } else {
                                 Log.e("Module", "policies error: " + error);
