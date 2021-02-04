@@ -119,7 +119,7 @@ public class Module extends ReactContextBaseJavaModule {
 	            user.setStateProvince(userJson.getString("province"));				
                 user.setFiscalCode(userJson.getString("fiscalCode"));
 
-				if(userJson.getString("locals").length() > 0){
+				if(userJson.getJSONObject("locals").length() > 0){
                 	JSONObject locals = new JSONObject(userJson.getString("locals"));
 					user.setLocals(locals);
 				}	
