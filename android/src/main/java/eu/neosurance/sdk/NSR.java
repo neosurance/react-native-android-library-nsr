@@ -155,7 +155,7 @@ public class NSR {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}			
-			responseHandler(setupComplete);
+			responseHandler.completionHandler(setupComplete, null);
 			
 		} catch (Exception e) {
 			NSRLog.e("setup", e);
