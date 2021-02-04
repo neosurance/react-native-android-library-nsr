@@ -161,7 +161,9 @@ public class NSRActivity extends AppCompatActivity {
 					ready = true;
 				}
 				if ("registerUser".equals(what) && body.has("user")) {
-					NSR.getInstance(this).registerUser(new NSRUser(body.getJSONObject("user")));
+					NSR.getInstance(this).registerUser(new NSRUser(body.getJSONObject("user")), new NSRSecurityResponse() {
+                        public void completionHandler(JSONObject json, String error) throws Exception {}
+                    });
 				}
 				if ("loginExecuted".equals(what)) {
 					appLogin();

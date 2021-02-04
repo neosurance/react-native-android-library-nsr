@@ -48,7 +48,7 @@ public class Module extends ReactContextBaseJavaModule {
 
 
   @ReactMethod
-  public void setup(final String settingsTmp) {
+  public void setup(final String settingsTmp, final Callback callback) {
 
       ctx = getReactApplicationContext();
       ctx.runOnUiQueueThread(new Runnable() {
@@ -96,7 +96,7 @@ public class Module extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void registerUser(final String userTmp) {
+  public void registerUser(final String userTmp, final Callback callback) {
 
       ctx = getReactApplicationContext();
       ctx.runOnUiQueueThread(new Runnable() {
