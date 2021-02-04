@@ -46,10 +46,10 @@
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
 		</provider>
 		
-		<!--activity
+		<activity
 				android:name="eu.neosurance.sdk.NSRActivityWebView"
 				android:configChanges="orientation|screenSize|keyboardHidden"
-				android:screenOrientation="portrait"/-->
+				android:screenOrientation="portrait"/>
 	</application>
 
 </manifest>
