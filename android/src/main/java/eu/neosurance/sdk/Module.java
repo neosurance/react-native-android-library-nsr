@@ -56,7 +56,8 @@ public class Module extends ReactContextBaseJavaModule {
             public void run() {
 
                 try {
-                    Toast.makeText(ctx, "RUNNING SETUP...", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ctx, "RUNNING SETUP...", Toast.LENGTH_LONG).show();
+					Log.d("Module", "setup");
 
                     JSONObject settingsJson = new JSONObject(settingsTmp);
 
@@ -105,8 +106,9 @@ public class Module extends ReactContextBaseJavaModule {
 
             try {
                 JSONObject userJson = new JSONObject(userTmp);
-                Toast.makeText(ctx, "RUNNING " + userJson.getString("method") + "...", Toast.LENGTH_LONG).show();
-
+                //Toast.makeText(ctx, "RUNNING " + userJson.getString("method") + "...", Toast.LENGTH_LONG).show();
+				Log.d("Module", "registerUser");
+				
                 NSRUser user = new NSRUser();
                 user.setEmail(userJson.getString("email"));
                 user.setCode(userJson.getString("code"));
@@ -145,7 +147,8 @@ public class Module extends ReactContextBaseJavaModule {
         @Override
         public void run() {
 
-            Toast.makeText(ctx, "RUNNING SEND TRIAL EVENT...", Toast.LENGTH_LONG).show();
+            //Toast.makeText(ctx, "RUNNING SEND TRIAL EVENT...", Toast.LENGTH_LONG).show();
+			Log.d("Module", "sendEvent");
 
             try {
                 JSONObject eventJson = new JSONObject(event);
@@ -171,7 +174,8 @@ public class Module extends ReactContextBaseJavaModule {
           @Override
           public void run() {
 
-              Toast.makeText(ctx, "RUNNING SHOW LIST...", Toast.LENGTH_LONG).show();
+              //Toast.makeText(ctx, "RUNNING SHOW LIST...", Toast.LENGTH_LONG).show();
+			  Log.d("Module", "showApp");
 
               NSR.getInstance(ctx).showApp();
 
@@ -188,7 +192,9 @@ public class Module extends ReactContextBaseJavaModule {
             @Override
             public void run() {
 
-                Toast.makeText(ctx, "RUNNING NSR CLAIM...", Toast.LENGTH_LONG).show();
+                //Toast.makeText(ctx, "RUNNING NSR CLAIM...", Toast.LENGTH_LONG).show();
+				Log.d("Module", "takePicture");
+				
                 try {
                     ctx.startActivity(NSRUtils.makeActivityWebView(event,ctx));
                 } catch (Exception e) {
@@ -208,7 +214,9 @@ public class Module extends ReactContextBaseJavaModule {
             @Override
             public void run() {
 
-                Toast.makeText(ctx, "RUNNING LOGIN EXECUTED...", Toast.LENGTH_LONG).show();
+                //Toast.makeText(ctx, "RUNNING LOGIN EXECUTED...", Toast.LENGTH_LONG).show();
+				Log.d("Module", "appLogin");
+				
                 try {
 
                     String url = WFDelegate.getData(ctx,"login_url");
@@ -232,7 +240,9 @@ public class Module extends ReactContextBaseJavaModule {
             @Override
             public void run() {
 
-                Toast.makeText(ctx, "RUNNING PAYMENT EXECUTED...", Toast.LENGTH_LONG).show();
+                //Toast.makeText(ctx, "RUNNING PAYMENT EXECUTED...", Toast.LENGTH_LONG).show();
+				Log.d("Module", "appPayment");
+				
                 try {
 
                     String payment_url = WFDelegate.getData(ctx,"payment_url");
@@ -257,7 +267,9 @@ public class Module extends ReactContextBaseJavaModule {
             @Override
             public void run() {
 
-                Toast.makeText(ctx, "GETTING POLICIES...", Toast.LENGTH_LONG).show();
+                //Toast.makeText(ctx, "GETTING POLICIES...", Toast.LENGTH_LONG).show();
+				Log.d("Module", "policies");
+				
                 try {
 
                     JSONObject criteria = new JSONObject();
@@ -295,7 +307,9 @@ public class Module extends ReactContextBaseJavaModule {
             @Override
             public void run() {
 
-                Toast.makeText(ctx, "CLOSING VIEW...", Toast.LENGTH_LONG).show();
+                //Toast.makeText(ctx, "CLOSING VIEW...", Toast.LENGTH_LONG).show();
+				Log.d("Module", "closeView");
+				
                 try {
                     NSR.getInstance(ctx).closeView();
                 } catch (Exception e) {

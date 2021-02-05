@@ -57,7 +57,7 @@ There are many ways to do this, here's the way I do it:
 4. Open **build.gradle** under **android/app/**
    - find the android { } block
    ```
-   minSdkVersion 19
+   minSdkVersion 24
    ```       
         
 5. Simply `import/require` it by the name defined in your library's `package.json`:
@@ -87,9 +87,10 @@ var settings = {
 
 if(Platform.OS === 'android') {
 
-    var _self = this;
-
-    Neosurance.setup(JSON.stringify(settings));
+    Neosurance.setup(JSON.stringify(settings), function(response){						
+		var result = JSON.parse(response);
+		console.log(">>>> SETUP - result: ", result);				
+	});
     
 }
 
