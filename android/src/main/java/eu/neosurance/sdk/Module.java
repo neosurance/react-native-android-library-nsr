@@ -32,10 +32,8 @@ public class Module extends ReactContextBaseJavaModule {
     super(reactContext);
   }
   
-  private void sendEvent(ReactContext reactContext,
-                         String eventName,
-                         @Nullable WritableMap params) {
-    reactContext
+  public void sendEvent(ReactApplicationContext reactContext, String eventName, WritableMap params) {
+	  reactContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
         .emit(eventName, params);
   }
