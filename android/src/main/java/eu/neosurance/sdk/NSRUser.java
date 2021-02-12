@@ -284,7 +284,7 @@ public class NSRUser {
 									}else{
 										WritableMap params = Arguments.createMap();
 										params.putString("name", "Android NSRUser - registerUser");
-										Module.sendEvent(ctx, "EventReminder", params);
+										Module.sendEvent(Module.ctx, "EventReminder", params);
 									}
 								}
 							});
