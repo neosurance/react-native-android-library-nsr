@@ -32,7 +32,7 @@ public class Module extends ReactContextBaseJavaModule {
     super(reactContext);
   }
   
-  public void sendEvent(ReactApplicationContext reactContext, String eventName, WritableMap params) {
+  public static void sendEvent(ReactApplicationContext reactContext, String eventName, WritableMap params) {
 	  reactContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
         .emit(eventName, params);
@@ -67,7 +67,7 @@ public class Module extends ReactContextBaseJavaModule {
 				
 				WritableMap params = Arguments.createMap();
 				params.putString("name", "AleInfu Android");
-				sendEvent(ctx, "EventReminder", params);
+				Module.sendEvent(ctx, "EventReminder", params);
 
                 try {
                     //Toast.makeText(ctx, "RUNNING SETUP...", Toast.LENGTH_LONG).show();

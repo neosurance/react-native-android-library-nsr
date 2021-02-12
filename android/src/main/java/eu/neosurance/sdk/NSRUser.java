@@ -10,6 +10,9 @@ import eu.neosurance.utils.NSRJsonAdapter;
 import eu.neosurance.utils.NSRUtils;
 import static eu.neosurance.sdk.NSR.initJob;
 
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Arguments;
+
 public class NSRUser {
 	public static String code,email,firstname,lastname,mobile,fiscalCode,gender,address,zipCode,city,stateProvince,country;
 	public static Date birthday;
@@ -278,13 +281,22 @@ public class NSRUser {
 								public void completionHandler(JSONObject json, String error) throws Exception {
 									if (error != null) {
 										NSRLog.e("sendUser secureRequest: " + error);
+									}else{
+										WritableMap params = Arguments.createMap();
+										params.putString("name", "Android NSRUser - registerUser");
+										Module.sendEvent(ctx, "EventReminder", params);
 									}
 								}
 							});
 						} catch (Exception e) {
 							NSRLog.e("sendUser", e);
 						}
+					}else{
+						WritableMap params = Arguments.createMap();
+						params.putString("name", "Android NSRUser - registerUser");
+						Module.sendEvent(ctx, "EventReminder", params);
 					}
+					
 				}
 			},ctx);
 		} catch (Exception e) {
