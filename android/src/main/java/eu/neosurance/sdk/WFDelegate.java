@@ -15,6 +15,9 @@ import org.json.JSONObject;
 
 import static eu.neosurance.sdk.NSRActivity.TAG;
 
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Arguments;
+
 
 public class WFDelegate implements NSRWorkflowDelegate {
 
@@ -66,6 +69,11 @@ public class WFDelegate implements NSRWorkflowDelegate {
 
 		String url = data.getString("url");
 		setData(contextWF, "login_url", url);
+		
+		WritableMap params = Arguments.createMap();
+		params.putString("name", "NSRExecutedLogin");
+		params.putString("url", url);
+		Module.sendEvent(Module.ctx, "EventReminder", params);
 
 	}
 
@@ -108,6 +116,12 @@ public class WFDelegate implements NSRWorkflowDelegate {
 
 		String url = payment.getString("payment_url");
 		setData(contextWF, "payment_url", url);
+
+		WritableMap params = Arguments.createMap();
+		params.putString("name", "NSRExecutedPayment");
+		params.putString("url", url);
+		params.putString("payload", payment.toString());
+		Module.sendEvent(Module.ctx, "EventReminder", params);
 
 	}
 

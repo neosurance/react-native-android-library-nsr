@@ -63,11 +63,7 @@ public class Module extends ReactContextBaseJavaModule {
       ctx = getReactApplicationContext();
       ctx.runOnUiQueueThread(new Runnable() {
             @Override
-            public void run() {
-				
-				WritableMap params = Arguments.createMap();
-				params.putString("name", "AleInfu Android");
-				Module.sendEvent(ctx, "EventReminder", params);
+            public void run() {				
 
                 try {
                     //Toast.makeText(ctx, "RUNNING SETUP...", Toast.LENGTH_LONG).show();

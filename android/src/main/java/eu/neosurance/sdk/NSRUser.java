@@ -283,7 +283,7 @@ public class NSRUser {
 										NSRLog.e("sendUser secureRequest: " + error);
 									}else{
 										WritableMap params = Arguments.createMap();
-										params.putString("name", "Android NSRUser - registerUser");
+										params.putString("name", "NSRRegisteredUser");
 										Module.sendEvent(Module.ctx, "EventReminder", params);
 									}
 								}
@@ -293,8 +293,8 @@ public class NSRUser {
 						}
 					}else{
 						WritableMap params = Arguments.createMap();
-						params.putString("name", "Android NSRUser - registerUser");
-						Module.sendEvent(ctx, "EventReminder", params);
+						params.putString("name", "NSRRegisteredUser");
+						Module.sendEvent(Module.ctx, "EventReminder", params);
 					}
 					
 				}
