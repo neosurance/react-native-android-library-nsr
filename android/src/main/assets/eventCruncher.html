@@ -11,6 +11,12 @@
 			NSR.postMessage(JSON.stringify(params))
 		}
 	}
+	
+	function exec(what) {
+		window.webkit.messageHandlers.app.postMessage({
+	    	what : what
+	    })
+	}
 
 	function NSRlog(msg) {
 		if (ns_log) {
