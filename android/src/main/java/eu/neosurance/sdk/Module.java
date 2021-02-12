@@ -9,6 +9,10 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Arguments;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +30,14 @@ public class Module extends ReactContextBaseJavaModule {
 
   public Module(ReactApplicationContext reactContext) {
     super(reactContext);
+  }
+  
+  private void sendEvent(ReactContext reactContext,
+                         String eventName,
+                         @Nullable WritableMap params) {
+    reactContext
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit(eventName, params);
   }
 
   @Override
@@ -54,6 +66,10 @@ public class Module extends ReactContextBaseJavaModule {
       ctx.runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
+				
+				WritableMap params = Arguments.createMap();
+				params.putString("name", "AleInfu Android");
+				sendEvent(ctx, "EventReminder", params);
 
                 try {
                     //Toast.makeText(ctx, "RUNNING SETUP...", Toast.LENGTH_LONG).show();
